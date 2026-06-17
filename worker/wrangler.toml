@@ -1,0 +1,8 @@
+name = "yui-airdrop-api"
+main = "src/index.js"
+compatibility_date = "2024-05-01"
+
+[vars]
+# BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN" # Set this in Cloudflare dashboard env variables
+SUPABASE_URL = "https://duqeddeosjousmoctlpq.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1cWVkZGVvc2pvdXNtb2N0bHBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMzUyODgsImV4cCI6MjA5NjYxMTI4OH0.y1Y_uBAdU4S3b7oVabyIqYjA_0mJlTGOXKGZLc5tavw"

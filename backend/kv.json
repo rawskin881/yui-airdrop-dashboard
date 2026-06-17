@@ -1,0 +1,14 @@
+{
+  "user:1234567": {
+    "value": "Master Crypto",
+    "expiresAt": null
+  },
+  "user:1234567:full": {
+    "value": "{\"id\":\"1234567\",\"first_name\":\"Master\",\"last_name\":\"Crypto\",\"username\":\"mastercrypto\",\"platform\":\"telegram\"}",
+    "expiresAt": null
+  },
+  "airdrops:1234567": {
+    "value": "[{\"id\":\"a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d\",\"userId\":\"1234567\",\"name\":\"Scroll Mainnet Airdrop\",\"nama\":\"Scroll Mainnet Airdrop\",\"deadline\":\"2026-06-21\",\"status\":\"pending\",\"skor\":9,\"notes\":\"Fokus transaksi bulanan & interaksi smart contract.\",\"tasks\":[{\"id\":\"t1\",\"title\":\"Bridge ETH to Scroll\",\"done\":true},{\"id\":\"t2\",\"title\":\"Swap on Ambient Finance\",\"done\":false},{\"id\":\"t3\",\"title\":\"Provide Liquidity on Nuri\",\"done\":false}],\"createdAt\":\"2026-06-16T22:55:09.323Z\"},{\"id\":\"b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e\",\"userId\":\"1234567\",\"name\":\"Linea Voyage LXP\",\"nama\":\"Linea Voyage LXP\",\"deadline\":\"2026-06-14\",\"status\":\"gagal\",\"skor\":8,\"notes\":\"Quest Linea Park sudah berakhir.\",\"tasks\":[{\"id\":\"t1\",\"title\":\"Complete Proof of Humanity (PoH)\",\"done\":false},{\"id\":\"t2\",\"title\":\"Collect LXP from tasks\",\"done\":false}],\"createdAt\":\"2026-06-16T22:55:09.323Z\"},{\"id\":\"c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f\",\"userId\":\"1234567\",\"name\":\"Berachain Artio Testnet\",\"nama\":\"Berachain Artio Testnet\",\"deadline\":\"2026-07-01\",\"status\":\"claim\",\"skor\":10,\"notes\":\"Testnet gratis, claim BERA faucet tiap 8 jam.\",\"tasks\":[{\"id\":\"t1\",\"title\":\"Drip Faucet BERA\",\"done\":true},{\"id\":\"t2\",\"title\":\"Swap BERA to HONEY on BEX\",\"done\":true},{\"id\":\"t3\",\"title\":\"Mint HONEY on Honey dApp\",\"done\":true}],\"createdAt\":\"2026-06-16T22:55:09.323Z\"},{\"id\":\"594ca9ce-4e56-4154-97a9-1f24222d08d6\",\"userId\":\"1234567\",\"name\":\"Simple Chain\",\"nama\":\"Simple Chain\",\"deadline\":\"2026-11-17\",\"status\":\"pending\",\"skor\":6,\"notes\":\"https://www.simplechain.com/home\",\"tasks\":[{\"id\":\"i6aj0ua\",\"title\":\"Claim faucet\",\"done\":false},{\"id\":\"mu7mxmr\",\"title\":\"Daily Check In\",\"done\":false}],\"createdAt\":\"2026-06-17T00:57:23.292Z\"}]",
+    "expiresAt": null
+  }
+}
