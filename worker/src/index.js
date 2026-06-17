@@ -279,6 +279,50 @@ function scoreBadge(s) {
   return "💤 LOW";
 }
 
+function calculateSummary(airdrops) {
+  const now = new Date();
+  
+  let totalAirdrops = airdrops.length;
+  let completed = 0;
+  let pending = 0;
+  let nextDeadline = null;
+  let upcomingReminders = [];
+
+  for (const airdrop of airdrops) {
+    if (airdrop.status === "completed" || airdrop.status === "done" || airdrop.status === "claim") {
+      completed++;
+    } else if (airdrop.status === "pending") {
+      pending++;
+    }
+
+    const deadline = new Date(airdrop.deadline);
+    const timeUntil = deadline.getTime() - now.getTime();
+    const daysUntil = Math.ceil(timeUntil / (1000 * 60 * 60 * 24));
+
+    if (airdrop.status === "pending") {
+      if (!nextDeadline || deadline < new Date(nextDeadline)) {
+        nextDeadline = airdrop.deadline;
+      }
+    }
+
+    if (daysUntil <= 7 && daysUntil > 0 && airdrop.status === "pending") {
+      upcomingReminders.push({
+        name: airdrop.name || airdrop.nama,
+        daysLeft: daysUntil,
+        reminderStatus: daysUntil <= 1 ? "h1" : (daysUntil <= 3 ? "h3" : "h7")
+      });
+    }
+  }
+
+  return {
+    totalAirdrops,
+    completed,
+    pending,
+    nextDeadline,
+    upcomingReminders: upcomingReminders.sort((a, b) => a.daysLeft - b.daysLeft)
+  };
+}
+
 function checklistProgress(tasks) {
   let taskList = [];
   if (typeof tasks === "string") {
