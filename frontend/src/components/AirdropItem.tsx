@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, CheckSquare, Edit, Flame, Trash2, Clock } from 'lucide-react';
+import { Calendar, CheckSquare, Edit, Flame, Trash2, Clock, ExternalLink, RotateCcw } from 'lucide-react';
 import ProgressBar from './ProgressBar';
 
 export interface Task {
@@ -20,6 +20,8 @@ export interface Airdrop {
   notes: string;
   tasks: Task[];
   createdAt: string;
+  link?: string;
+  repeatType?: 'once' | 'daily' | 'weekly';
 }
 
 interface AirdropItemProps {
@@ -27,13 +29,15 @@ interface AirdropItemProps {
   onEdit: (airdrop: Airdrop) => void;
   onDelete: (airdropId: string) => void;
   onToggleTask: (airdropId: string, taskId: string) => void;
+  onResetTasks?: (airdropId: string) => void;
 }
 
 export const AirdropItem: React.FC<AirdropItemProps> = ({ 
   airdrop, 
   onEdit, 
   onDelete,
-  onToggleTask 
+  onToggleTask,
+  onResetTasks
 }) => {
   const [countdown, setCountdown] = useState<{ text: string; color: string; expired: boolean }>({
     text: '',
@@ -144,17 +148,41 @@ export const AirdropItem: React.FC<AirdropItemProps> = ({
         {/* Header */}
         <div className="flex justify-between items-start gap-2">
           <div className="space-y-1">
-            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base group-hover:text-pink-500 leading-tight">
-              {airdropName}
-            </h3>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base group-hover:text-pink-500 leading-tight">
+                {airdropName}
+              </h3>
+              {airdrop.link && (
+                <a 
+                  href={airdrop.link.startsWith('http') ? airdrop.link : `https://${airdrop.link}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex text-yui-pink-dark hover:text-pink-600 transition-colors"
+                  title="Buka Website Airdrop"
+                >
+                  <ExternalLink size={13} />
+                </a>
+              )}
+            </div>
             <div className="flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
               <Calendar size={12} />
               <span>Deadline: {airdrop.deadline}</span>
             </div>
           </div>
-          <span className={getStatusBadge(airdrop.status)}>
-            {getStatusLabel(airdrop.status)}
-          </span>
+          <div className="flex flex-col items-end gap-1.5">
+            <span className={getStatusBadge(airdrop.status)}>
+              {getStatusLabel(airdrop.status)}
+            </span>
+            {airdrop.repeatType && airdrop.repeatType !== 'once' && (
+              <span className={`px-2 py-0.5 text-[9px] font-extrabold rounded-lg uppercase tracking-wider border shadow-sm ${
+                airdrop.repeatType === 'daily' 
+                  ? 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-200/50 dark:border-blue-900/40' 
+                  : 'bg-violet-500/15 text-violet-600 dark:text-violet-400 border-violet-200/50 dark:border-violet-900/40'
+              }`}>
+                🔄 {airdrop.repeatType === 'daily' ? 'Harian' : 'Mingguan'}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Notes (truncate) */}
@@ -226,6 +254,15 @@ export const AirdropItem: React.FC<AirdropItemProps> = ({
 
         {/* Action Buttons */}
         <div className="flex gap-1">
+          {airdrop.repeatType && airdrop.repeatType !== 'once' && onResetTasks && (
+            <button
+              onClick={() => onResetTasks(airdrop.id)}
+              className="p-2 rounded-xl border border-blue-200/40 dark:border-blue-950/20 hover:bg-blue-500/10 text-blue-600 dark:text-blue-400 transition-all active:scale-90"
+              title="Reset Checklist & Ulangi Tugas"
+            >
+              <RotateCcw size={14} />
+            </button>
+          )}
           <button
             onClick={() => onEdit(airdrop)}
             className="p-2 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-all active:scale-90"

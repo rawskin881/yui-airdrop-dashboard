@@ -485,7 +485,9 @@ app.get("/api/airdrops", authenticateToken, async (req, res) => {
             skor: a.skor,
             notes: a.notes || '',
             tasks: a.tasks || [],
-            createdAt: a.created_at
+            createdAt: a.created_at,
+            link: a.link || '',
+            repeatType: a.repeat_type || 'once'
         }));
         return res.status(200).json(formattedList);
     }
@@ -521,7 +523,9 @@ app.post("/api/airdrops", authenticateToken, async (req, res) => {
                 skor: a.skor,
                 notes: a.notes || '',
                 tasks: a.tasks || [],
-                created_at: a.createdAt || new Date().toISOString()
+                created_at: a.createdAt || new Date().toISOString(),
+                link: a.link || '',
+                repeat_type: a.repeatType || 'once'
             }));
             const { error: insertError } = await supabase
                 .from('airdrops')
@@ -608,7 +612,9 @@ app.get("/api/dashboard/data", authenticateToken, async (req, res) => {
             skor: a.skor,
             notes: a.notes || '',
             tasks: a.tasks || [],
-            createdAt: a.created_at
+            createdAt: a.created_at,
+            link: a.link || '',
+            repeatType: a.repeat_type || 'once'
         }));
         const summary = calculateSummary(airdrops);
         // Mood logic based on pending/missed deadlines

@@ -66,6 +66,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
   const [formSkor, setFormSkor] = useState(5);
   const [formNotes, setFormNotes] = useState('');
   const [formTasks, setFormTasks] = useState<Task[]>([]);
+  const [formLink, setFormLink] = useState('');
+  const [formRepeatType, setFormRepeatType] = useState<Airdrop['repeatType']>('once');
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
   // Toast Notification State
@@ -145,6 +147,57 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
     }
   };
 
+  // Reset/repeat all checklist tasks under a repeat category
+  const handleResetRepeatType = async (type: 'daily' | 'weekly') => {
+    const label = type === 'daily' ? 'Harian' : 'Mingguan';
+    if (window.confirm(`Apakah Kakak yakin ingin mereset/mengulang semua tugas ${label}? Semua checklist tugas di kategori ini akan dikosongkan kembali! 🔄`)) {
+      const updatedAirdrops = airdrops.map(airdrop => {
+        if (airdrop.repeatType === type) {
+          const resetTasks = (airdrop.tasks || []).map(task => ({
+            ...task,
+            done: false
+          }));
+          return {
+            ...airdrop,
+            tasks: resetTasks,
+            status: 'pending' as const
+          };
+        }
+        return airdrop;
+      });
+
+      setAirdrops(updatedAirdrops);
+      const ok = await saveAirdropsList(updatedAirdrops);
+      if (ok) {
+        showToast(`Semua tugas ${label} berhasil direset untuk diulang! 🔄🌸`, 'success');
+      }
+    }
+  };
+
+  // Reset checklist tasks of a single airdrop
+  const handleResetTasksSingle = async (airdropId: string) => {
+    const updatedAirdrops = airdrops.map(airdrop => {
+      if (airdrop.id === airdropId) {
+        const resetTasks = (airdrop.tasks || []).map(task => ({
+          ...task,
+          done: false
+        }));
+        return {
+          ...airdrop,
+          tasks: resetTasks,
+          status: 'pending' as const
+        };
+      }
+      return airdrop;
+    });
+
+    setAirdrops(updatedAirdrops);
+    const ok = await saveAirdropsList(updatedAirdrops);
+    if (ok) {
+      showToast('Checklist tugas berhasil direset! 🔄🌸', 'success');
+    }
+  };
+
   // Delete an airdrop
   const handleDeleteAirdrop = async (airdropId: string) => {
     if (window.confirm('Apakah Kakak yakin ingin menghapus airdrop ini? Yui sedih lho... 🥺')) {
@@ -169,6 +222,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
     setFormSkor(5);
     setFormNotes('');
     setFormTasks([]);
+    setFormLink('');
+    setFormRepeatType('once');
     setNewTaskTitle('');
     setIsModalOpen(true);
   };
@@ -182,6 +237,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
     setFormSkor(airdrop.skor);
     setFormNotes(airdrop.notes || '');
     setFormTasks(airdrop.tasks || []);
+    setFormLink(airdrop.link || '');
+    setFormRepeatType(airdrop.repeatType || 'once');
     setNewTaskTitle('');
     setIsModalOpen(true);
   };
@@ -233,6 +290,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
             skor: formSkor,
             notes: formNotes.trim(),
             tasks: formTasks,
+            link: formLink.trim(),
+            repeatType: formRepeatType,
           };
         }
         return item;
@@ -249,7 +308,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
         skor: formSkor,
         notes: formNotes.trim(),
         tasks: formTasks,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        link: formLink.trim(),
+        repeatType: formRepeatType,
       };
       updatedAirdrops.push(newAirdrop);
     }
@@ -358,6 +419,30 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
           </div>
           
           <div className="flex gap-2">
+            {/* Reset Harian */}
+            {airdrops.some(a => a.repeatType === 'daily') && (
+              <button
+                onClick={() => handleResetRepeatType('daily')}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-200/20 dark:border-blue-900/30 shadow-sm transition-all active:scale-95 animate-pulse"
+                title="Reset semua tugas dengan kategori Harian"
+              >
+                <RotateCcw size={14} />
+                <span>Reset Harian</span>
+              </button>
+            )}
+
+            {/* Reset Mingguan */}
+            {airdrops.some(a => a.repeatType === 'weekly') && (
+              <button
+                onClick={() => handleResetRepeatType('weekly')}
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-violet-500/10 hover:bg-violet-500/20 text-violet-600 dark:text-violet-400 border border-violet-200/20 dark:border-violet-900/30 shadow-sm transition-all active:scale-95 animate-pulse"
+                title="Reset semua tugas dengan kategori Mingguan"
+              >
+                <RotateCcw size={14} />
+                <span>Reset Mingguan</span>
+              </button>
+            )}
+
             {/* Export CSV */}
             <button
               onClick={handleExportCSV}
@@ -438,6 +523,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
             onDelete={handleDeleteAirdrop}
             onToggleTask={handleToggleTask}
             onAddClick={handleAddClick}
+            onResetTasks={handleResetTasksSingle}
           />
         )}
       </main>
@@ -546,6 +632,36 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, logout }) => {
                   onChange={(e) => setFormNotes(e.target.value)}
                   className="w-full px-4 py-2.5 text-sm rounded-2xl border border-slate-300 dark:border-slate-850 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-yui-pink-dark/40 focus:border-yui-pink-dark transition-all"
                 />
+              </div>
+
+              {/* Row 3.5: Link and Repeat Type */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                    Link Airdrop / Website
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: https://scroll.io/bridge"
+                    value={formLink}
+                    onChange={(e) => setFormLink(e.target.value)}
+                    className="w-full px-4 py-2.5 text-sm rounded-2xl border border-slate-300 dark:border-slate-850 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:ring-2 focus:ring-yui-pink-dark/40 focus:border-yui-pink-dark transition-all"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
+                    Kategori Perulangan
+                  </label>
+                  <select
+                     value={formRepeatType}
+                     onChange={(e) => setFormRepeatType(e.target.value as Airdrop['repeatType'])}
+                     className="w-full px-4 py-2.5 text-sm rounded-2xl border border-slate-300 dark:border-slate-850 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-semibold outline-none focus:outline-none focus:ring-2 focus:ring-yui-pink-dark/40 focus:border-yui-pink-dark transition-all"
+                  >
+                    <option value="once" className="dark:bg-slate-900">Sekali Saja (No Repeat)</option>
+                    <option value="daily" className="dark:bg-slate-900">Tugas Harian (Daily Repeat)</option>
+                    <option value="weekly" className="dark:bg-slate-900">Tugas Mingguan (Weekly Repeat)</option>
+                  </select>
+                </div>
               </div>
 
               {/* Yui Dynamic AI Advice Bubble */}

@@ -10,6 +10,7 @@ interface AirdropListProps {
   onDelete: (airdropId: string) => void;
   onToggleTask: (airdropId: string, taskId: string) => void;
   onAddClick: () => void;
+  onResetTasks?: (airdropId: string) => void;
 }
 
 type SortOption = 'deadline' | 'skor' | 'createdAt';
@@ -20,7 +21,8 @@ export const AirdropList: React.FC<AirdropListProps> = ({
   onEdit,
   onDelete,
   onToggleTask,
-  onAddClick
+  onAddClick,
+  onResetTasks
 }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('all');
@@ -173,6 +175,7 @@ export const AirdropList: React.FC<AirdropListProps> = ({
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onToggleTask={onToggleTask}
+                  onResetTasks={onResetTasks}
                 />
               </motion.div>
             ))}
